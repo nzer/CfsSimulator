@@ -122,34 +122,7 @@ static void _fixup(tree_t *tree, node_t *z)
     tree->root->isRed = 0;
 }
 
-void insert(tree_t *tree, task_t task)
-{
-    node_t *y = NULL;
-    node_t *x = tree->root;
-    node_t *z = create_node();
-    z->data = task;
-    while (x != NULL)
-    {
-        y = x;
-        if (task.vruntime < x->data.vruntime)
-            x = x->leftChild;
-        else
-            x = x->rightChild;
-    }
-    z->parent = y;
-    if (y == NULL)
-        tree->root = z;
-    else if (z->data.vruntime < y->data.vruntime)
-        y->leftChild = z;
-    else
-        y->rightChild = z;
-    z->leftChild = NULL;
-    z->rightChild = NULL;
-    z->isRed = 1;
-    _fixup(tree, z);
-}
-
-void _move(tree_t *tree, node_t *u, node_t *v)
+static void _move(tree_t *tree, node_t *u, node_t *v)
 {
     if (u->parent == NULL)
     {
@@ -169,7 +142,7 @@ void _move(tree_t *tree, node_t *u, node_t *v)
     }
 }
 
-void _fixup2(tree_t *t, node_t *x)
+static void _fixup2(tree_t *t, node_t *x)
 {
     while (x != t->root && !x->isRed)
     {
@@ -239,7 +212,7 @@ void _fixup2(tree_t *t, node_t *x)
     x->isRed = 0;
 }
 
-node_t *_find_min(node_t *x)
+static node_t *_find_min(node_t *x)
 {
     while (x->leftChild != NULL)
     {
@@ -248,25 +221,30 @@ node_t *_find_min(node_t *x)
     return x;
 }
 
-void _delete(tree_t *tree, node_t *z)
+static void _delete(tree_t *tree, node_t *z)
 {
-    node_t * x = NULL;
-    node_t * y = z;
+    node_t *x = NULL;
+    node_t *y = z;
     int yWasRed = y->isRed;
-    if (z->leftChild == NULL) {
+    if (z->leftChild == NULL)
+    {
         x = z->rightChild;
         _move(tree, z, z->rightChild);
     }
-    else if (z->rightChild == NULL) {
+    else if (z->rightChild == NULL)
+    {
         x = z->leftChild;
         _move(tree, z, z->leftChild);
-    } else {
+    }
+    else
+    {
         y = _find_min(z->rightChild);
         yWasRed = y->isRed;
         x = y->rightChild;
         if (y->parent == z)
             x->parent = y;
-        else {
+        else
+        {
             _move(tree, y, y->rightChild);
             y->rightChild = z->rightChild;
             y->rightChild->parent = y;
@@ -323,4 +301,31 @@ task_t pop_min2(tree_t *tree)
     task_t ret = node->data;
     free(node);
     return ret;
+}
+
+void insert(tree_t *tree, task_t task)
+{
+    node_t *y = NULL;
+    node_t *x = tree->root;
+    node_t *z = create_node();
+    z->data = task;
+    while (x != NULL)
+    {
+        y = x;
+        if (task.vruntime < x->data.vruntime)
+            x = x->leftChild;
+        else
+            x = x->rightChild;
+    }
+    z->parent = y;
+    if (y == NULL)
+        tree->root = z;
+    else if (z->data.vruntime < y->data.vruntime)
+        y->leftChild = z;
+    else
+        y->rightChild = z;
+    z->leftChild = NULL;
+    z->rightChild = NULL;
+    z->isRed = 1;
+    _fixup(tree, z);
 }
