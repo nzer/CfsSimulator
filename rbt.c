@@ -149,7 +149,148 @@ void insert(tree_t *tree, task_t task)
     _fixup(tree, z);
 }
 
+void _move(tree_t *tree, node_t *u, node_t *v)
+{
+    if (u->parent == NULL)
+    {
+        tree->root = v;
+    }
+    else if (u == u->parent->leftChild)
+    {
+        u->parent->leftChild = v;
+    }
+    else
+    {
+        u->parent->rightChild = v;
+    }
+    if (v != NULL)
+    {
+        v->parent = u->parent;
+    }
+}
+
+void _fixup2(tree_t *t, node_t *x)
+{
+    while (x != t->root && !x->isRed)
+    {
+        if (x == x->parent->leftChild)
+        {
+            node_t *node_w = x->parent->rightChild;
+            if (node_w->isRed)
+            {
+                node_w->isRed = 0;
+                x->parent->isRed = 1;
+                _leftRotation(t, x->parent);
+                node_w = x->parent->rightChild;
+            }
+            else if (!node_w->leftChild->isRed && !node_w->rightChild->isRed)
+            {
+                node_w->isRed = 1;
+                x = x->parent;
+            }
+            else if (!node_w->rightChild->isRed)
+            {
+                node_w->leftChild->isRed = 0;
+                node_w->isRed = 1;
+                _rightRotation(t, node_w);
+                node_w = x->parent->rightChild;
+            }
+            else
+            {
+                node_w->isRed = x->parent->isRed;
+                x->parent->isRed = 0;
+                node_w->rightChild->isRed = 0;
+                _leftRotation(t, x->parent);
+                x = t->root;
+            }
+        }
+        else if (x == x->parent->rightChild)
+        {
+            node_t *node_w = x->parent->leftChild;
+            if (node_w->isRed)
+            {
+                node_w->isRed = 0;
+                x->parent->isRed = 1;
+                _leftRotation(t, x->parent);
+                node_w = x->parent->rightChild;
+            }
+            else if (!node_w->leftChild->isRed && !node_w->rightChild->isRed)
+            {
+                node_w->isRed = 1;
+                x = x->parent;
+            }
+            else if (!node_w->rightChild->isRed)
+            {
+                node_w->leftChild->isRed = 0;
+                node_w->isRed = 1;
+                _rightRotation(t, node_w);
+                node_w = x->parent->rightChild;
+            }
+            else
+            {
+                node_w->isRed = x->parent->isRed;
+                x->parent->isRed = 0;
+                node_w->rightChild->isRed = 0;
+                _leftRotation(t, x->parent);
+                x = t->root;
+            }
+        }
+    }
+    x->isRed = 0;
+}
+
+node_t *_find_min(node_t *x)
+{
+    while (x->leftChild != NULL)
+    {
+        x = x->leftChild;
+    }
+    return x;
+}
+
+void _delete(tree_t *tree, node_t *z)
+{
+    node_t * x = NULL;
+    node_t * y = z;
+    int yWasRed = y->isRed;
+    if (z->leftChild == NULL) {
+        x = z->rightChild;
+        _move(tree, z, z->rightChild);
+    }
+    else if (z->rightChild == NULL) {
+        x = z->leftChild;
+        _move(tree, z, z->leftChild);
+    } else {
+        y = _find_min(z->rightChild);
+        yWasRed = y->isRed;
+        x = y->rightChild;
+        if (y->parent == z)
+            x->parent = y;
+        else {
+            _move(tree, y, y->rightChild);
+            y->rightChild = z->rightChild;
+            y->rightChild->parent = y;
+        }
+        _move(tree, z, y);
+        y->leftChild = z->leftChild;
+        y->leftChild->parent = y;
+        y->isRed = z->isRed;
+    }
+    if (!yWasRed && x != NULL)
+        _fixup2(tree, x);
+}
+
+// Return and delete minimal element
 task_t pop_min(tree_t *tree)
+{
+    node_t *min = _find_min(tree->root);
+    task_t ret = min->data;
+    _delete(tree, min);
+    free(min);
+    return ret;
+}
+
+task_t pop_min2(tree_t *tree)
 {
     assert(tree->root != NULL);
     node_t *node = tree->root;
@@ -163,7 +304,11 @@ task_t pop_min(tree_t *tree)
     // 3) This node is root
     if (node->parent == NULL)
     {
-        tree->root = node->rightChild;
+        assert(tree->root == node);
+        if (node->rightChild != NULL)
+        {
+            tree->root = node->rightChild;
+        }
     }
     else if (node->rightChild == NULL)
     {
@@ -174,8 +319,7 @@ task_t pop_min(tree_t *tree)
         node->parent->leftChild = node->rightChild;
         node->parent->leftChild->parent = node->parent;
     }
-    // Color of moved node might be wrong
-    _fixup(tree, node->parent);
+
     task_t ret = node->data;
     free(node);
     return ret;

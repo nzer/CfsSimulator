@@ -21,7 +21,7 @@ int main(int argc, char const *argv[])
     fclose(input);
     while (tree.root != NULL)
     {
-        
+        pop_min(&tree);
     }
     
     return 0;

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(cfs_simulator VERSION 0.1.0 LANGUAGES C)
-add_compile_options(-Wall -Werror -pedantic)
+SET(CMAKE_C_COMPILER "/usr/bin/clang")
+add_compile_options(-Wall -Werror -pedantic -fno-omit-frame-pointer -fsanitize=address)
+add_link_options(-fno-omit-frame-pointer -fsanitize=address)
 
 add_library(rbt SHARED rbt.c)
 
