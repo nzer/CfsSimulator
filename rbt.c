@@ -95,7 +95,9 @@ static void _fixup(tree_t *tree, node_t *z)
                 z->parent->parent->isRed = 1;
                 _rightRotation(tree, z->parent->parent);
             }
-        } else {
+        }
+        else
+        {
             node_t *y = z->parent->parent->leftChild;
             if (y != NULL && y->isRed)
             {
@@ -147,26 +149,34 @@ void insert(tree_t *tree, task_t task)
     _fixup(tree, z);
 }
 
-task_t pop_min(tree_t* tree)
+task_t pop_min(tree_t *tree)
 {
     assert(tree->root != NULL);
-    node_t* node = tree->root;
+    node_t *node = tree->root;
     while (node->leftChild != NULL)
     {
         node = node->leftChild;
     }
-    task_t ret = node->data;
     // Two cases for deletion
     // 1) This node is leaf
     // 2) This node has right child
-    if (node->rightChild == NULL)
+    // 3) This node is root
+    if (node->parent == NULL)
+    {
+        tree->root = node->rightChild;
+    }
+    else if (node->rightChild == NULL)
     {
         node->parent->leftChild = NULL;
-    } else {
+    }
+    else
+    {
         node->parent->leftChild = node->rightChild;
+        node->parent->leftChild->parent = node->parent;
     }
     // Color of moved node might be wrong
     _fixup(tree, node->parent);
+    task_t ret = node->data;
     free(node);
     return ret;
 }

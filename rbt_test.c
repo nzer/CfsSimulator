@@ -3,7 +3,8 @@
 #include <assert.h>
 #include "rbt.h"
 
-void test_pop() {
+void test_pop()
+{
     tree_t tree;
     tree.root = NULL;
     int min = RAND_MAX;
@@ -20,9 +21,22 @@ void test_pop() {
     assert(min == t.vruntime);
 }
 
+void test_increasing() {
+    tree_t tree;
+    tree.root = NULL;
+    for (size_t i = 0; i < 5000; i++)
+    {
+        task_t task;
+        task.name = "task1";
+        task.vruntime = i;
+        insert(&tree, task);
+    }
+}
+
 int main()
 {
     test_pop();
+    test_increasing();
     printf("Success \n");
     return 0;
 }
