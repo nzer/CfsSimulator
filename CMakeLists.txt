@@ -5,9 +5,11 @@ add_compile_options(-Wall -Werror -pedantic -fno-omit-frame-pointer -fsanitize=a
 add_link_options(-fno-omit-frame-pointer -fsanitize=address)
 
 add_library(rbt SHARED rbt.c)
+add_library(llist SHARED linked_list.c)
 
 add_executable(cfs_simulator main.c)
-target_link_libraries(cfs_simulator PRIVATE rbt)
+# target_link_libraries(cfs_simulator PRIVATE rbt)
+# target_link_libraries(cfs_simulator PRIVATE llist)
 
 add_executable(cfs_rbt_test rbt_test.c)
 target_link_libraries(cfs_rbt_test PRIVATE rbt)

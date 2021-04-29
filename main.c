@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "rbt.h"
+#include "rbt.c"
+#include "linked_list.c"
 
 // all tasks must run at least once
 #define SCHED_LATENCY 50
@@ -16,7 +17,8 @@ int main(int argc, char const *argv[])
     // Input format: name pri burst appearance
     FILE *input = fopen("/home/alim/Projects/CfsSimulator/input.txt", "r");
     size_t tasks_count = 0;
-    size_t max_appereance_time = 0;
+    //size_t tasks_added = 0;
+    size_t max_appearance_time = 0;
     fscanf(input, "%zu", &tasks_count);
     for (size_t i = 0; i < tasks_count; i++)
     {
@@ -24,9 +26,9 @@ int main(int argc, char const *argv[])
         fscanf(input, "%s %zu %zu %zu", task.name, &task.pri, &task.burst_time, &task.appearance_time);
         insert(&tree, task);
         total_pri += task.pri;
-        if (task.appearance_time > max_appereance_time)
+        if (task.appearance_time > max_appearance_time)
         {
-            max_appereance_time = task.appearance_time;
+            max_appearance_time = task.appearance_time;
         }
     }
     fclose(input);
