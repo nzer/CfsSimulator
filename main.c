@@ -9,7 +9,7 @@
 
 int main(int argc, char const *argv[])
 {
-    tree_t tree = tree_create();
+    rbtree_t tree = tree_create();
     size_t current_time = 0;
     size_t total_pri = 0;
 

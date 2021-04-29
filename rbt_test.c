@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "rbt.h"
 
-void invariant_check1(node_t *node)
+void invariant_check1(rbnode_t *node)
 {
     if (node != NULL)
     {
@@ -22,7 +22,7 @@ void invariant_check1(node_t *node)
     }
 }
 
-void dump_dot2(node_t *node, FILE *o)
+void dump_dot2(rbnode_t *node, FILE *o)
 {
     if (node != NULL)
     {
@@ -40,7 +40,7 @@ void dump_dot2(node_t *node, FILE *o)
     }
 }
 
-void dump_dot(tree_t *tree)
+void dump_dot(rbtree_t *tree)
 {
 
     FILE *o = fopen("dotdump.txt", "w");
@@ -52,7 +52,7 @@ void dump_dot(tree_t *tree)
 
 void test_pop()
 {
-    tree_t tree;
+    rbtree_t tree;
     tree.root = NULL;
     int min = RAND_MAX;
     for (size_t i = 0; i < 5000; i++)
@@ -70,7 +70,7 @@ void test_pop()
 
 void test_pop2()
 {
-    tree_t tree;
+    rbtree_t tree;
     tree.root = NULL;
     for (size_t i = 0; i < 5000; i++)
     {
@@ -90,7 +90,7 @@ void test_pop2()
 
 void test_pop_dump()
 {
-    tree_t tree;
+    rbtree_t tree;
     tree.root = NULL;
     size_t counter = 1;
     size_t cap = (rand() + 1) % 50 + 15;
@@ -121,7 +121,7 @@ void test_pop_dump()
 
 void test_increasing()
 {
-    tree_t tree;
+    rbtree_t tree;
     tree.root = NULL;
     for (size_t i = 0; i < 5000; i++)
     {

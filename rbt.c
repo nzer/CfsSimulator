@@ -2,9 +2,9 @@
 #include <assert.h>
 #include "rbt.h"
 
-static node_t *create_node()
+static rbnode_t *create_node()
 {
-    node_t *node = malloc(sizeof(node_t));
+    rbnode_t *node = malloc(sizeof(rbnode_t));
     node->parent = NULL;
     node->isRed = 0;
     node->leftChild = NULL;
@@ -12,13 +12,13 @@ static node_t *create_node()
     return node;
 }
 
-static void _leftRotation(tree_t *tree, node_t *x)
+static void _leftRotation(rbtree_t *tree, rbnode_t *x)
 {
     if (x->rightChild == NULL)
     {
         return;
     }
-    node_t *y = x->rightChild;
+    rbnode_t *y = x->rightChild;
     x->rightChild = y->leftChild;
     if (y->leftChild != NULL)
     {
@@ -41,13 +41,13 @@ static void _leftRotation(tree_t *tree, node_t *x)
     x->parent = y;
 }
 
-static void _rightRotation(tree_t *tree, node_t *y)
+static void _rightRotation(rbtree_t *tree, rbnode_t *y)
 {
     if (y->leftChild == NULL)
     {
         return;
     }
-    node_t *x = y->leftChild;
+    rbnode_t *x = y->leftChild;
     y->leftChild = x->rightChild;
     if (x->rightChild != NULL)
     {
@@ -70,13 +70,13 @@ static void _rightRotation(tree_t *tree, node_t *y)
     y->parent = x;
 }
 
-static void _fixup(tree_t *tree, node_t *z)
+static void _fixup(rbtree_t *tree, rbnode_t *z)
 {
     while (z != tree->root && z->parent->isRed)
     {
         if (z->parent == z->parent->parent->leftChild)
         {
-            node_t *y = z->parent->parent->rightChild;
+            rbnode_t *y = z->parent->parent->rightChild;
             if (y != NULL && y->isRed)
             {
                 z->parent->isRed = 0;
@@ -98,7 +98,7 @@ static void _fixup(tree_t *tree, node_t *z)
         }
         else
         {
-            node_t *y = z->parent->parent->leftChild;
+            rbnode_t *y = z->parent->parent->leftChild;
             if (y != NULL && y->isRed)
             {
                 z->parent->isRed = 0;
@@ -122,7 +122,7 @@ static void _fixup(tree_t *tree, node_t *z)
     tree->root->isRed = 0;
 }
 
-static void _move(tree_t *tree, node_t *u, node_t *v)
+static void _move(rbtree_t *tree, rbnode_t *u, rbnode_t *v)
 {
     if (u->parent == NULL)
     {
@@ -142,13 +142,13 @@ static void _move(tree_t *tree, node_t *u, node_t *v)
     }
 }
 
-static void _fixup2(tree_t *t, node_t *x)
+static void _fixup2(rbtree_t *t, rbnode_t *x)
 {
     while (x != t->root && !x->isRed)
     {
         if (x == x->parent->leftChild)
         {
-            node_t *node_w = x->parent->rightChild;
+            rbnode_t *node_w = x->parent->rightChild;
             if (node_w->isRed)
             {
                 node_w->isRed = 0;
@@ -179,7 +179,7 @@ static void _fixup2(tree_t *t, node_t *x)
         }
         else if (x == x->parent->rightChild)
         {
-            node_t *node_w = x->parent->leftChild;
+            rbnode_t *node_w = x->parent->leftChild;
             if (node_w->isRed)
             {
                 node_w->isRed = 0;
@@ -212,7 +212,7 @@ static void _fixup2(tree_t *t, node_t *x)
     x->isRed = 0;
 }
 
-static node_t *_find_min(node_t *x)
+static rbnode_t *_find_min(rbnode_t *x)
 {
     while (x->leftChild != NULL)
     {
@@ -221,10 +221,10 @@ static node_t *_find_min(node_t *x)
     return x;
 }
 
-static void _delete(tree_t *tree, node_t *z)
+static void _delete(rbtree_t *tree, rbnode_t *z)
 {
-    node_t *x = NULL;
-    node_t *y = z;
+    rbnode_t *x = NULL;
+    rbnode_t *y = z;
     int yWasRed = y->isRed;
     if (z->leftChild == NULL)
     {
@@ -260,9 +260,9 @@ static void _delete(tree_t *tree, node_t *z)
 }
 
 // Return and delete minimal element
-task_t pop_min(tree_t *tree)
+task_t pop_min(rbtree_t *tree)
 {
-    node_t *min = _find_min(tree->root);
+    rbnode_t *min = _find_min(tree->root);
     task_t ret = min->data;
     _delete(tree, min);
     free(min);
@@ -270,10 +270,10 @@ task_t pop_min(tree_t *tree)
 }
 
 // I believe deletion could be further optimized because only leftmost or root node are removed
-task_t pop_min2(tree_t *tree)
+task_t pop_min2(rbtree_t *tree)
 {
     assert(tree->root != NULL);
-    node_t *node = tree->root;
+    rbnode_t *node = tree->root;
     while (node->leftChild != NULL)
     {
         node = node->leftChild;
@@ -305,11 +305,11 @@ task_t pop_min2(tree_t *tree)
     return ret;
 }
 
-void insert(tree_t *tree, task_t task)
+void insert(rbtree_t *tree, task_t task)
 {
-    node_t *y = NULL;
-    node_t *x = tree->root;
-    node_t *z = create_node();
+    rbnode_t *y = NULL;
+    rbnode_t *x = tree->root;
+    rbnode_t *z = create_node();
     z->data = task;
     while (x != NULL)
     {
