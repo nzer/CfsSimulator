@@ -11,6 +11,8 @@
 int main(int argc, char const *argv[])
 {
     rbtree_t tree = tree_create();
+    linked_list_t list = list_create();
+
     size_t current_time = 0;
     size_t total_pri = 0;
 
@@ -24,7 +26,7 @@ int main(int argc, char const *argv[])
     {
         task_t task = task_create();
         fscanf(input, "%s %zu %zu %zu", task.name, &task.pri, &task.burst_time, &task.appearance_time);
-        insert(&tree, task);
+        push(&list, task);
         total_pri += task.pri;
         if (task.appearance_time > max_appearance_time)
         {
@@ -34,8 +36,27 @@ int main(int argc, char const *argv[])
     fclose(input);
 
     // Runs until no more tasks left
-    while (tree.root != NULL)
+    while (tree.root != NULL || list.root != NULL)
     {
+        // Look for suitable tasks
+        linked_node_t *lnode = list.root;
+        while (lnode != NULL)
+        {
+            if (lnode->data.appearance_time <= current_time)
+            {
+                insert(&tree, lnode->data);
+                erase(&list, lnode);
+                break;
+            }
+            lnode = lnode->next;
+        }
+
+        if (tree.root == NULL)
+        {
+            current_time++;
+            continue;
+        }
+
         task_t curr_task = pop_min(&tree);
         // Task will for minimal of latency/number of tasks
         size_t runtime = SCHED_LATENCY / (tree.size + 1) * (float)curr_task.pri / (float)total_pri;
@@ -54,9 +75,13 @@ int main(int argc, char const *argv[])
         {
             curr_task.response_time = current_time - curr_task.appearance_time;
         }
-        size_t waiting_time = current_time - curr_task.last_run_time;
+        size_t waiting_time = 0;
+        if (curr_task.last_run_time != 0)
+        {
+            waiting_time = current_time - curr_task.last_run_time;
+        }
         curr_task.total_wait_time += waiting_time;
-        curr_task.last_run_time = current_time;
+        curr_task.last_run_time = current_time + runtime;
 
         curr_task.vruntime += runtime;
         current_time += runtime;
@@ -78,7 +103,7 @@ int main(int argc, char const *argv[])
         {
             printf("Task %s finished, total statistics:\n", curr_task.name);
             printf("    total preemptions: %zu\n", curr_task.preemptions);
-            printf("    total waiting time: %zu\n", current_time - curr_task.appearance_time - curr_task.burst_time);
+            printf("    total waiting time (formula): %zu\n", current_time - curr_task.appearance_time - curr_task.burst_time);
             total_pri -= curr_task.pri;
             task_destroy(curr_task);
         }

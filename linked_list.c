@@ -27,11 +27,23 @@ void push(linked_list_t *list, task_t task)
         last_node->next->data = task;
         last_node->next->prev = last_node;
     }
+    list->size++;
 }
 
-void erase(linked_node_t *node)
+void erase(linked_list_t *list, linked_node_t *node)
 {
-    node->prev->next = node->next;
-    node->next->prev = node->prev;
+    list->size--;
+    if (node->prev != NULL)
+    {
+        node->prev->next = node->next;
+    }
+    else
+    {
+        list->root = node->next;
+    }
+    if (node->next != NULL)
+    {
+        node->next->prev = node->prev;
+    }
     free(node);
 }

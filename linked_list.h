@@ -16,4 +16,13 @@ typedef struct linked_list
 
 void push(linked_list_t *list, task_t task);
 
-void erase(linked_node_t *node);
+void erase(linked_list_t *list, linked_node_t *node);
+
+linked_list_t list_create()
+{
+    linked_list_t list;
+    list.root = NULL;
+    list.size = 0;
+    return list;
+}
+
