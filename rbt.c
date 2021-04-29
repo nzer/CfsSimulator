@@ -221,7 +221,6 @@ static node_t *_find_min(node_t *x)
     return x;
 }
 
-// I believe deletion could be further optimized because only leftmost or root node are removed
 static void _delete(tree_t *tree, node_t *z)
 {
     node_t *x = NULL;
@@ -269,6 +268,7 @@ task_t pop_min(tree_t *tree)
     return ret;
 }
 
+// I believe deletion could be further optimized because only leftmost or root node are removed
 task_t pop_min2(tree_t *tree)
 {
     assert(tree->root != NULL);

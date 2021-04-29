@@ -5,23 +5,21 @@
 
 void invariant_check1(node_t *node)
 {
-    if (node != NULL && node->isRed)
+    if (node != NULL)
     {
         if (node->leftChild != NULL)
         {
-            assert(node->leftChild->isRed == 0);
+            if (node->isRed)
+                assert(node->leftChild->isRed == 0);
             invariant_check1(node->leftChild);
         }
         if (node->rightChild != NULL)
         {
-            assert(node->rightChild->isRed == 0);
+            if (node->isRed)
+                assert(node->rightChild->isRed == 0);
             invariant_check1(node->rightChild);
         }
     }
-    if (node->leftChild != NULL)
-        invariant_check1(node->leftChild);
-    if (node->rightChild != NULL)
-        invariant_check1(node->rightChild);
 }
 
 void dump_dot2(node_t *node, FILE *o)
@@ -103,18 +101,18 @@ void test_pop_dump()
         task.vruntime = counter++;
         insert(&tree, task);
     }
-    for (size_t i = 0; i < cap/2; i++)
+    for (size_t i = 0; i < cap / 2; i++)
     {
         pop_min(&tree);
     }
-    for (size_t i = 0; i < cap/3; i++)
+    for (size_t i = 0; i < cap / 3; i++)
     {
         task_t task;
         task.name = "task";
         task.vruntime = counter++;
         insert(&tree, task);
     }
-    for (size_t i = 0; i < cap/4; i++)
+    for (size_t i = 0; i < cap / 4; i++)
     {
         pop_min(&tree);
     }
