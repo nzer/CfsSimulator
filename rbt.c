@@ -256,6 +256,7 @@ static void _delete(tree_t *tree, node_t *z)
     }
     if (!yWasRed && x != NULL)
         _fixup2(tree, x);
+    tree->size--;
 }
 
 // Return and delete minimal element
@@ -329,4 +330,5 @@ void insert(tree_t *tree, task_t task)
     z->rightChild = NULL;
     z->isRed = 1;
     _fixup(tree, z);
+    tree->size++;
 }

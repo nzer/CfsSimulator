@@ -1,3 +1,8 @@
+CFS
+
+1 virtual tick = 1 real tick
+
+
 TESTS
 
 rbt_test.c contains functions used to test red black tree implementation. Also it has function to dump tree in graphwiz format.
