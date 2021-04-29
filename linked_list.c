@@ -25,6 +25,7 @@ void push(linked_list_t *list, task_t task)
         }
         last_node->next = create_lnode();
         last_node->next->data = task;
+        last_node->next->prev = last_node;
     }
 }
 
