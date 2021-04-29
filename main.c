@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
     FILE *input = fopen("/home/alim/Projects/CfsSimulator/input.txt", "r");
     size_t tasks_count = 0;
     size_t max_appereance_time = 0;
-    fscanf(input, "%d", &tasks_count);
+    fscanf(input, "%zu", &tasks_count);
     for (size_t i = 0; i < tasks_count; i++)
     {
         task_t task = task_create();
@@ -62,10 +62,11 @@ int main(int argc, char const *argv[])
         printf("==============================\n");
         printf("Turn statistics:\n");
         printf("Current time: %zu\n", current_time);
-        printf("Task %s run for: %zu\n", curr_task.name, runtime);
-        printf("Task %s response time: %i\n", curr_task.name, curr_task.response_time);
-        printf("Task %s last wait time: %zu\n", curr_task.name, waiting_time);
-        printf("Task %s total wait time: %zu\n", curr_task.name, curr_task.total_wait_time);
+        printf("    task name: %s\n", curr_task.name);
+        printf("    run for: %zu\n", runtime);
+        printf("    response time: %i\n", curr_task.response_time);
+        printf("    last wait time: %zu\n", waiting_time);
+        printf("    total wait time: %zu\n", curr_task.total_wait_time);
         if (curr_task.vruntime != curr_task.burst_time)
         {
             curr_task.preemptions++;
@@ -73,9 +74,9 @@ int main(int argc, char const *argv[])
         }
         else
         {
-            printf("Task %s total preemptions: %zu\n", curr_task.name, curr_task.preemptions);
-            printf("Task %s total waiting time: %zu\n", curr_task.name, current_time - curr_task.appearance_time - curr_task.burst_time);
-            printf("Task %s finished\n", curr_task.name);
+            printf("Task %s finished, total statistics:\n", curr_task.name);
+            printf("    total preemptions: %zu\n", curr_task.preemptions);
+            printf("    total waiting time: %zu\n", current_time - curr_task.appearance_time - curr_task.burst_time);
             total_pri -= curr_task.pri;
             task_destroy(curr_task);
         }
